@@ -1,14 +1,10 @@
-# -------------------------------------------------
-# Step 1: Import required libraries
-# -------------------------------------------------
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import folium
 
-# -------------------------------------------------
-# Step 2: Create a synthetic dataset with regions
-# -------------------------------------------------
+
 rng = pd.date_range(start="2020-01-01", end="2022-12-31", freq="D")
 t = np.arange(len(rng))
 regions = ["North", "South", "East", "West"]
@@ -37,9 +33,7 @@ for r in regions:
 
 covid_df = pd.DataFrame(data, columns=["date", "region", "cases"])
 
-# -------------------------------------------------
-# Step 3: National summary and peak detection
-# -------------------------------------------------
+
 covid_total = covid_df.groupby("date", as_index=False)["cases"].sum()
 covid_total["cases_ma7"] = covid_total["cases"].rolling(7, min_periods=1).mean()
 
@@ -47,9 +41,7 @@ peak_row = covid_total.loc[covid_total["cases_ma7"].idxmax()]
 print("Peak Date:", peak_row["date"].date())
 print("Peak 7-day Avg Cases:", int(peak_row["cases_ma7"]))
 
-# -------------------------------------------------
-# Step 4: National Trend Plot
-# -------------------------------------------------
+
 plt.figure(figsize=(12,6))
 plt.plot(covid_total["date"], covid_total["cases"], alpha=0.3, label="Daily Cases")
 plt.plot(covid_total["date"], covid_total["cases_ma7"], color="blue", linewidth=2, label="7-day MA")
@@ -59,9 +51,6 @@ plt.legend(); plt.grid(True, linestyle="--", alpha=0.6)
 plt.tight_layout()
 plt.show()
 
-# -------------------------------------------------
-# Step 5: Regional Comparison
-# -------------------------------------------------
 plt.figure(figsize=(12,6))
 for r in regions:
     series = covid_df[covid_df["region"] == r].groupby("date")["cases"].sum().rolling(7, min_periods=1).mean()
@@ -77,10 +66,7 @@ plt.show()
 regional_peaks = covid_df.groupby("region")["cases"].max().reset_index()
 print("\nRegional Peak Daily Cases:\n", regional_peaks)
 
-# -------------------------------------------------
-# Step 6: Interactive Map with Folium
-# (Example: plotting regional centers with dummy coords)
-# -------------------------------------------------
+
 region_coords = {
     "North": [28.7041, 77.1025],  # Delhi
     "South": [12.9716, 77.5946],  # Bengaluru
